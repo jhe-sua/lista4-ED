@@ -1,7 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <string>
+#include <iostream>
 
 class Game {
 public:
@@ -16,6 +16,13 @@ public:
     std::string getTitle();
     std::string getShortDescription();
     int getPopularity();
+
+    // para printar
+    std::string getTitle() const;
+    std::string getShortDescription() const;
+    int getPopularity() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Game& game);
 };
 
 #endif

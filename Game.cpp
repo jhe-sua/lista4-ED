@@ -22,3 +22,27 @@ int Game::getPopularity()
 {
     return popularity;
 }
+
+string Game::getTitle() const
+{
+    return title;
+}
+
+string Game::getShortDescription() const
+{
+    return description;
+}
+
+int Game::getPopularity() const
+{
+    return popularity;
+}
+
+ostream& operator<<(ostream& os, const Game& game)
+{
+    os << "[" << game.getTitle();
+    os << " | " << game.getShortDescription();
+    os << " | " << game.getPopularity() << "]";
+
+    return os;
+}

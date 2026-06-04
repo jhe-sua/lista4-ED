@@ -32,14 +32,15 @@ private:
     int charToIndex(char c);
     std::string toUpperCase(std::string text);
     std::string removeSpaces(std::string text);
-
+    
     // Para a ordenação
     bool lessGame(Game* g1, Game* g2);
-    void merge(vector<Game*>*, int p, int q, int r);
-    void mergeSort(vector<Game*>*, int p, int q, int r);
-
-    int charToIndex(char c);
-public:
+    void merge(std::vector<Game*>& games, int p, int q, int r);
+    void mergeSort(std::vector<Game*>& games, int p, int r);
+    
+    // Para recuperação
+    TrieNode* takeNode(std::string prefix);
+    public:
 
     Trie();
     ~Trie();
