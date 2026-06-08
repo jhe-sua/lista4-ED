@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include <iostream>
+#include <string>
 
 class Game {
 public:

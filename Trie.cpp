@@ -14,6 +14,14 @@ TrieNode::TrieNode()
     game = nullptr;
 }
 
+TrieNode::~TrieNode()
+{
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+    {
+        delete children[i];
+    }
+}
+
 Trie::Trie()
     : root(new TrieNode())
 {}
@@ -22,119 +30,6 @@ Trie::~Trie()
 {
     delete root;
 }
-
-bool Trie::insert(Game* game)
-{
-    TrieNode* current = root;
-    string key = toSearchKey(game->getTitle());
-    int i;
-
-    for (size_t nivel = 0; nivel < key.size(); nivel++)
-    {
-        i = charToIndex(key[nivel]);
-        if (current->children[i] == nullptr)
-        {
-            current->children[i] = new TrieNode();
-        }
-
-        current = current->children[i]; 
-    }
-
-    current->game = game;
-    current->isEndOfTitle = true;
-    return true;
-}
-
-bool Trie::contains(string title)
-{
-    TrieNode* current = root;
-    string key = toSearchKey(title);
-    int i;
-
-    for (size_t nivel = 0; nivel < key.size(); nivel++)
-    {
-        i = charToIndex(key[nivel]);
-        if (current->children[i] == nullptr) return false;
-        current = current->children[i]; 
-    }
-
-    return current->isEndOfTitle;
-}
-
-TrieNode* Trie::takeNode(string prefix)
-{
-    TrieNode* current = root;
-    string key = toSearchKey(prefix);
-    int i;
-
-    for (size_t nivel = 0; nivel < key.size(); nivel++)
-    {
-        i = charToIndex(key[nivel]);
-        if (current->children[i] == nullptr) return nullptr;
-        current = current->children[i]; 
-    }
-
-    return current;   
-}
-
-vector<Game*> Trie::autocomplete(string prefix, int k)
-{
-    vector<Game*> games;
-    if (k <= 0) return games;
-    
-    TrieNode* current = takeNode(prefix);
-    if (current == nullptr) return games;
-    
-    vector<TrieNode*> fila;
-
-    size_t index = 0;
-    int ng = 0;
-
-    fila.push_back(current);
-    
-    if (current->isEndOfTitle){
-        games.push_back(current->game);
-        ++ng;
-    }
-
-    while (index < fila.size() && ng < k)
-    {
-        current = fila[index++];
-
-        for (TrieNode* child : current->children)
-        {
-            if (child != nullptr)
-            {   
-                fila.push_back(child);
-
-                if (child->isEndOfTitle)
-                {
-                    games.push_back(child->game);
-                    ++ng;
-
-                    if (ng >= k) break;
-                }
-            }
-        }
-    }
-
-    sortResults(games);
-    return games;
-}
-
-int Trie::charToIndex(char c)
-{
-    if (c >= '0' && c <= '9')
-    {
-        return c - '0';
-    }
-    else if (c >= 'A' && c <= 'Z')
-    {
-        return c - 'A' + 10;
-    }
-    return -1;
-}
-
 
 string Trie::toUpperCase(string text)
 {
@@ -172,6 +67,130 @@ string Trie::toSearchKey(string text)
 
     return text;
 }
+
+int Trie::charToIndex(char c)
+{
+    if (c >= '0' && c <= '9')
+    {
+        return c - '0';
+    }
+    else if (c >= 'A' && c <= 'Z')
+    {
+        return c - 'A' + 10;
+    }
+    return -1;
+}
+
+bool Trie::insert(Game* game)
+{
+    TrieNode* current = root;
+    string key = toSearchKey(game->getTitle());
+    int i;
+
+    for (size_t nivel = 0; nivel < key.size(); nivel++)
+    {
+        i = charToIndex(key[nivel]);
+        if (i < 0 || i >= ALPHABET_SIZE){
+            return false; 
+        }
+
+        if (current->children[i] == nullptr)
+        {
+            current->children[i] = new TrieNode();
+        }
+
+        current = current->children[i];
+    }
+
+    current->game = game;
+    current->isEndOfTitle = true;
+    return true;
+}
+
+bool Trie::contains(string title)
+{
+    TrieNode* current = root;
+    string key = toSearchKey(title);
+    int i;
+
+    for (size_t nivel = 0; nivel < key.size(); nivel++)
+    {
+        i = charToIndex(key[nivel]);
+        if (i < 0 || i >= ALPHABET_SIZE){
+            return false; 
+        }
+        
+        if (current->children[i] == nullptr) return false;
+        current = current->children[i];
+    }
+
+    return current->isEndOfTitle;
+}
+
+TrieNode* Trie::takeNode(string prefix)
+{
+    TrieNode* current = root;
+    string key = toSearchKey(prefix);
+    int i;
+
+    for (size_t nivel = 0; nivel < key.size(); nivel++)
+    {
+        i = charToIndex(key[nivel]);
+        if (i < 0 || i >= ALPHABET_SIZE){
+            return nullptr; 
+        }
+        
+        if (current->children[i] == nullptr){
+             return nullptr;
+        }
+
+        current = current->children[i]; 
+    }
+
+    return current;   
+}
+
+vector<Game*> Trie::autocomplete(string prefix, int k)
+{
+    vector<Game*> games;
+    if (k <= 0) return games;
+    
+    TrieNode* current = takeNode(prefix);
+    if (current == nullptr) return games;
+    
+    vector<TrieNode*> toVisitStack;
+    toVisitStack.push_back(current);
+
+    while (!toVisitStack.empty())
+    {
+        current = toVisitStack.back();
+        toVisitStack.pop_back();
+
+        if (current->isEndOfTitle)
+        {
+            games.push_back(current->game);
+        }
+
+        for (TrieNode* child : current->children)
+        {
+            if (child != nullptr)
+            {
+                toVisitStack.push_back(child);
+            }
+        }
+    }
+
+    sortResults(games);
+
+    vector<Game*> firstK;
+    for (int i = 0; i < k && i < (int)games.size(); i++)
+    {
+        firstK.push_back(games[i]);
+    }
+
+    return firstK;
+}
+
 
 /// @brief determina a antecedencia de um jogo em relação a outro
 /// @param g1 game a ser comparado

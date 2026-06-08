@@ -23,23 +23,23 @@ int main(int argc, char* argv[])
 
     Trie trie = Trie();
 
-    vector<Game*> atc;
+    vector<Game*> autocom;
     
     for (int i = 0; i < numberOfGames; i++)
     {
         trie.insert(&games[i]);
     }
 
-    atc = trie.autocomplete(prefix, numMaxSuggestions);
+    autocom = trie.autocomplete(prefix, numMaxSuggestions);
 
-    if (atc.size() == 0)
+    if (autocom.size() == 0)
     {
         cout << "No results found" << endl;
         return 0;
     }
     
 
-    for (Game* g : atc)
+    for (Game* g : autocom)
     {
         cout << *g << endl;
     }

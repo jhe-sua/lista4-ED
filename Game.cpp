@@ -4,6 +4,10 @@
 
 using namespace std;
 
+Game::Game()
+    : title{""}, description{""}, popularity{0}
+{}
+
 Game::Game(string t, string d, int p)
     : title{t}, description{d}, popularity{p}
 {}

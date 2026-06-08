@@ -1,5 +1,5 @@
-#ifndef TRIE
-#define TRIE
+#ifndef TRIE_HPP
+#define TRIE_HPP
 
 #include <string>
 #include <vector>
@@ -17,7 +17,8 @@ public:
     Game* game;
 
     TrieNode();
-    ~TrieNode() = default;
+    ~TrieNode();
+
 };
 
 
