@@ -49,6 +49,7 @@ private:
     bool insert(Game* game);
     bool contains(std::string title);
 
+    void recursiveDFS(std::vector<Game*>& games, TrieNode* node);
     std::vector<Game*> autocomplete(std::string prefix, int k);
 
     std::string toSearchKey(std::string text);

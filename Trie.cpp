@@ -150,6 +150,28 @@ TrieNode* Trie::takeNode(string prefix)
     return current;   
 }
 
+
+void Trie::recursiveDFS(vector<Game*>& games, TrieNode* node)
+{
+
+    if(node == nullptr){
+        return;
+    }
+
+    if (node->isEndOfTitle){
+        games.push_back(node->game);
+    }
+
+    for (TrieNode* child : node->children)
+    {
+        if(child != nullptr){
+            recursiveDFS(games, child);
+        }
+    }
+
+}
+
+
 vector<Game*> Trie::autocomplete(string prefix, int k)
 {
     vector<Game*> games;
@@ -157,28 +179,8 @@ vector<Game*> Trie::autocomplete(string prefix, int k)
     
     TrieNode* current = takeNode(prefix);
     if (current == nullptr) return games;
-    
-    vector<TrieNode*> toVisitStack;
-    toVisitStack.push_back(current);
 
-    while (!toVisitStack.empty())
-    {
-        current = toVisitStack.back();
-        toVisitStack.pop_back();
-
-        if (current->isEndOfTitle)
-        {
-            games.push_back(current->game);
-        }
-
-        for (TrieNode* child : current->children)
-        {
-            if (child != nullptr)
-            {
-                toVisitStack.push_back(child);
-            }
-        }
-    }
+    recursiveDFS(games, current);
 
     sortResults(games);
 

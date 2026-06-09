@@ -1,6 +1,6 @@
 # Sistema de Autocomplete de Jogos com Trie
 
-Este projeto consiste em um sistema simples de autocomplete de jogos utilizando a estrutura de dados **Trie**. Os resultados encontrados são ordenados pela popularidade e, para desempates, pela ordem alfabética dos títulos usando o algoritmo *Merge Sort*.
+Este projeto consiste em um sistema simples de autocomplete de jogos utilizando a estrutura de dados **Trie**. Os resultados """""encontrados são ordenados pela popularidade e, para desempates, pela ordem alfabética dos títulos usando o algoritmo *Merge Sort*.
 
 
 ## Descrição do Projeto
