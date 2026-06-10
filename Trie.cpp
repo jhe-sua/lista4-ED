@@ -202,46 +202,54 @@ bool Trie::lessGame(Game* g1, Game* g2)
 {
     if (g1->getPopularity() != g2->getPopularity())
     {
-        return g1->getPopularity() < g2->getPopularity();
+        return g1->getPopularity() > g2->getPopularity();
     }
-    
-    return toSearchKey(g1->getTitle()) <= toSearchKey(g2->getTitle());
+
+    return toSearchKey(g1->getTitle()) < toSearchKey(g2->getTitle());
 }
 
-void Trie::merge(vector<Game*>& games, int b, int o, int q)
-{   
-    int nl = o - b + 1; int nr = q - o;
-    Game** left = new Game*[nl]; Game** right = new Game*[nr];
+void Trie::merge(std::vector<Game*>& games, int b, int o, int q)
+{
+    int nl = o - b + 1;
+    int nr = q - o;
 
-    for (int i = 0; i < nl; i++){
-        left[i] = games[i + b];
+    Game** left = new Game*[nl];
+    Game** right = new Game*[nr];
+
+    for (int i = 0; i < nl; i++)
+    {
+        left[i] = games[b + i];
     }
 
-    for (int i = 0; i < nr; i++){
-        right[i] = games[i + o + 1];
+    for (int i = 0; i < nr; i++)
+    {
+        right[i] = games[o + 1 + i];
     }
-    
+
     int l = 0, r = 0, i = b;
+
     while (l < nl && r < nr)
     {
-        if (lessGame(left[l], right[r]))
+        if (lessGame(right[r], left[l]))
         {
             games[i++] = right[r++];
         }
         else
         {
             games[i++] = left[l++];
-        } 
+        }
     }
 
-    while (l < nl){  // right estourou
+    while (l < nl)
+    {
         games[i++] = left[l++];
     }
 
-    while (r < nr){ // left estourou
+    while (r < nr)
+    {
         games[i++] = right[r++];
     }
-    
+
     delete[] left;
     delete[] right;
 }
